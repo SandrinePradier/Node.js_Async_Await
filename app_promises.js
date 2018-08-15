@@ -22,7 +22,7 @@ const grades = [{
 	grade:98
 }];
 
-const getUser = (id) => {
+async function getUser (id) {
 	return new Promise((resolve, reject)=>{
 		const user = users.find((user) => user.id === id );
 		if (user){
@@ -33,11 +33,11 @@ const getUser = (id) => {
 	})
 }
 
-getUser(2)
-	.then( (user) => {console.log('user:', user)})
-	.catch((e)=> console.log(e));
+// getUser(2)
+// 	.then( (user) => {console.log('user:', user)})
+// 	.catch((e)=> console.log(e));
 
-const getGrade = (schoolId) => {
+async function getGrade (schoolId) {
 	return new Promise((resolve, reject)=>{
 		// resolve(grades.filter((g)=> g.schoolId === schoolId));
 		const filteredGrades = grades.filter((g)=> g.schoolId === schoolId);
@@ -50,37 +50,59 @@ const getGrade = (schoolId) => {
 	});
 };
 
-getGrade(102)
-	.then((response) => console.log('grades:', response))
-	.catch((e)=> console.log(e))
+// getGrade(102)
+// 	.then((response) => console.log('grades:', response))
+// 	.catch((e)=> console.log(e))
 
 
-//xx has a 'average' in the class
-const getStatus = (userId) => {
-	//retrouver le user
-	let user;
-	return getUser(userId)
-	//le récupérer dans la promesse
-	.then((responseUser)=> {
-		user = responseUser;
-		return getGrade(user.schoolId);})
-	// récupérer ses notes
-	.then((responseGrade) => {
-		console.log('liste des grades:', responseGrade);
-		//créer une variable average
+// //xx has a 'average' in the class
+// const getStatus = (userId) => {
+// 	//retrouver le user
+// 	let user;
+// 	return getUser(userId)
+// 	//le récupérer dans la promesse
+// 	.then((responseUser)=> {
+// 		user = responseUser;
+// 		return getGrade(user.schoolId);})
+// 	// récupérer ses notes
+// 	.then((responseGrade) => {
+// 		console.log('liste des grades:', responseGrade);
+// 		//créer une variable average
+// 		let average;
+// 		if (responseGrade.length>0){
+// 			let gradeList = responseGrade.map((grade) => {
+// 				return grade.grade});
+// 			console.log('gradeList:', gradeList)
+// 			average = gradeList.reduce((a,b)=>a+b)/gradeList.length;
+// 		}
+// 		//retourner la moyenne
+// 		return `${user.name} has ${average} from getStatus`;
+// 	})
+	
+// }
+
+// getStatus(1)
+// .then((response) => console.log('status:', response))
+// .catch((e)=> console.log(e))
+
+async function getAverage (grades){
 		let average;
-		if (responseGrade.length>0){
-			let gradeList = responseGrade.map((grade) => {
+		if (grades.length>0){
+			let gradeList = grades.map((grade) => {
 				return grade.grade});
 			console.log('gradeList:', gradeList)
 			average = gradeList.reduce((a,b)=>a+b)/gradeList.length;
 		}
 		//retourner la moyenne
-		return `${user.name} has ${average}`;
-	})
-	
+		return average;
+		
 }
 
-getStatus(1)
-.then((response) => console.log('status:', response))
-.catch((e)=> console.log(e))
+async function getStatusBis (userId) {
+	let user = await getUser(userId);
+	let grade = await getGrade(user.schoolId);
+	let average = await getAverage(grade);
+	return `${user.name} has ${average} from getStatusBis`;
+}
+
+getStatusBis(1);
